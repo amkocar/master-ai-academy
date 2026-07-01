@@ -44,7 +44,7 @@ async function exchangeCode({ code, verifier, redirectUri }) {
     client_id: process.env.WHOP_CLIENT_ID,
     code_verifier: verifier,
   };
-  if (process.env.WHOP_CLIENT_SECRET) body.client_secret = process.env.WHOP_CLIENT_SECRET;
+ 
 
   const r = await fetch("https://api.whop.com/oauth/token", {
     method: "POST",
