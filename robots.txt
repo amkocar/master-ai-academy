@@ -1,7 +1,7 @@
 User-agent: *
 Allow: /
 Disallow: /academy.html
-Disallow: /access.html
+Disallow: /api/
 Disallow: /paywall.html
 
 Sitemap: https://www.learnmasterai.com/sitemap.xml

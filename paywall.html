@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 <meta name="robots" content="noindex,nofollow,noarchive"/>
 <title>Master AI Academy — Members Only</title>
+<link rel="icon" href="/logo.svg" type="image/svg+xml">
 <style>
 :root{--cyan:#6ee7ff;--violet:#9b76ff;--pink:#e047ff;--text:#f3f8ff;--muted:#9fb5d3}
 *{box-sizing:border-box}
@@ -14,12 +15,13 @@ radial-gradient(circle at 78% 76%,rgba(155,118,255,.18),transparent 42%),
 linear-gradient(180deg,#050b14,#02040a);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--text);display:grid;place-items:center;padding:24px}
 .wrap{width:min(980px,96vw);display:grid;grid-template-columns:1.15fr .85fr;gap:18px}
 .hero,.box{border:1px solid rgba(110,231,255,.26);border-radius:28px;background:rgba(8,18,34,.84);backdrop-filter:blur(18px);box-shadow:0 0 70px rgba(110,231,255,.1);padding:34px}
-.logo{width:64px;height:64px;border-radius:20px;background:conic-gradient(from 180deg,var(--cyan),var(--violet),var(--pink),var(--cyan));display:grid;place-items:center;font-weight:950;font-size:30px;box-shadow:0 0 34px rgba(110,231,255,.35);margin-bottom:22px}
+.logo{width:64px;height:64px;border-radius:20px;background-image:url('/logo.svg');background-size:cover;background-position:center;box-shadow:0 0 34px rgba(110,231,255,.35);margin-bottom:22px}
 .kicker{display:inline-flex;border:1px solid rgba(110,231,255,.3);border-radius:999px;padding:8px 12px;color:var(--cyan);font-weight:900;font-size:12px;letter-spacing:.08em;text-transform:uppercase;background:rgba(110,231,255,.08)}
 h1{font-size:54px;line-height:.95;letter-spacing:-.06em;margin:18px 0}h1 span{background:linear-gradient(90deg,#fff,var(--cyan),var(--violet));-webkit-background-clip:text;color:transparent}
 p{color:var(--muted);line-height:1.65;font-size:16px}ul{margin:18px 0 0;padding:0;list-style:none}li{padding:10px 0;color:#dbe8ff;border-bottom:1px solid rgba(255,255,255,.07)}li:before{content:"✓";color:var(--cyan);font-weight:900;margin-right:10px}
 .price{font-size:42px;font-weight:950;margin:8px 0}.price small{font-size:16px;color:var(--muted);font-weight:700}
-.btn{display:flex;justify-content:center;text-decoration:none;margin-top:18px;padding:16px 22px;border-radius:18px;background:linear-gradient(90deg,var(--cyan),var(--violet));color:white;font-weight:950;box-shadow:0 0 34px rgba(110,231,255,.22)}
+.btn{display:flex;justify-content:center;text-decoration:none;margin-top:14px;padding:16px 22px;border-radius:18px;background:linear-gradient(90deg,var(--cyan),var(--violet));color:white;font-weight:950;box-shadow:0 0 34px rgba(110,231,255,.22)}
+.btn.secondary{background:rgba(255,255,255,.06);border:1px solid rgba(110,231,255,.24);box-shadow:none}
 .note{font-size:12px;color:var(--muted);margin-top:14px;text-align:center}
 @media(max-width:850px){.wrap{grid-template-columns:1fr}h1{font-size:42px}}
 </style>
@@ -27,23 +29,24 @@ p{color:var(--muted);line-height:1.65;font-size:16px}ul{margin:18px 0 0;padding:
 <body>
 <div class="wrap">
   <section class="hero">
-    <div class="logo">M</div>
+    <div class="logo" aria-label="Master AI Academy"></div>
     <div class="kicker">Members only</div>
     <h1>Master AI<br><span>Academy</span></h1>
-    <p>This academy is locked for active members. Get access through Whop and you will be redirected back to the academy automatically.</p>
+    <p>This academy is protected by Whop login and active subscription verification. If your membership is active, sign in with Whop to enter.</p>
     <ul>
-      <li>Module 1 + Module 2 live now</li>
-      <li>Audio-driven visual lessons</li>
-      <li>New AI modules added continuously</li>
-      <li>Founding member access</li>
+      <li>Real Whop account verification</li>
+      <li>Active subscription required</li>
+      <li>Shared direct academy links are blocked</li>
+      <li>Cancelled or expired members lose access</li>
     </ul>
   </section>
   <aside class="box">
-    <div class="kicker">Founding Access</div>
+    <div class="kicker">Access</div>
     <div class="price">$49 <small>/ month</small></div>
-    <p>Join Master AI Academy and start learning AI from zero with a structured premium player.</p>
-    <a class="btn" href="https://whop.com/checkout/plan_jO0TvvuJFmOlT">Get Access</a>
-    <div class="note">Already purchased? Open the access link from Whop again.</div>
+    <p>Already paid? Sign in with the same Whop account you used at checkout.</p>
+    <a class="btn" href="/api/auth/login">Sign in with Whop</a>
+    <a class="btn secondary" href="https://whop.com/checkout/plan_jO0TvvuJFmOlT">Get Access</a>
+    <div class="note">No secret links. No shared access. Whop membership is checked server-side.</div>
   </aside>
 </div>
 </body>
