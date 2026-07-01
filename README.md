@@ -87,3 +87,46 @@ Expected: JSON with access true/false.
 
 Do not paste API key or client secret into GitHub/HTML.
 Only Vercel Environment Variables.
+
+
+## v28 Fix
+
+This version fixes `MIDDLEWARE_INVOCATION_FAILED` by using `NextResponse` and wrapping middleware logic in safe try/catch redirects.
+
+After upload/redeploy, test:
+
+https://www.learnmasterai.com/api/auth/debug
+
+Expected:
+All required env values should be true.
+
+Then:
+https://www.learnmasterai.com/academy.html?v=28
+
+Expected:
+Paywall, not 500.
+
+
+## v29 Fix
+
+This version removes `import { NextResponse } from "next/server"` from `middleware.js`.
+
+Use this for a static Vercel HTML project.
+
+Upload at least:
+
+- middleware.js
+- vercel.json
+- api/auth/debug.js
+
+Then redeploy.
+
+Test:
+
+https://www.learnmasterai.com/api/auth/debug
+
+Then:
+
+https://www.learnmasterai.com/academy.html?v=29
+
+Expected: paywall, not 500.

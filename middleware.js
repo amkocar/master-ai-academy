@@ -1,17 +1,16 @@
-import { NextResponse } from "next/server";
-
 const API_BASE = process.env.WHOP_API_BASE || "https://api.whop.com/api/v1";
 
-function b64urlToBytes(value) {
-  value = value.replace(/-/g, "+").replace(/_/g, "/");
-  const pad = value.length % 4 ? 4 - (value.length % 4) : 0;
-  const binary = atob(value + "=".repeat(pad));
-  const bytes = new Uint8Array(binary.length);
-  for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
-  return bytes;
+function redirectTo(url) {
+  return Response.redirect(url, 302);
 }
 
-function bytesToB64url(bytes) {
+function b64urlDecode(value) {
+  value = value.replace(/-/g, "+").replace(/_/g, "/");
+  const pad = value.length % 4 ? 4 - (value.length % 4) : 0;
+  return atob(value + "=".repeat(pad));
+}
+
+function b64urlEncode(bytes) {
   let binary = "";
   for (const b of bytes) binary += String.fromCharCode(b);
   return btoa(binary).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
@@ -26,7 +25,16 @@ async function hmac(payload, secret) {
     ["sign"]
   );
   const sig = await crypto.subtle.sign("HMAC", key, new TextEncoder().encode(payload));
-  return bytesToB64url(new Uint8Array(sig));
+  return b64urlEncode(new Uint8Array(sig));
+}
+
+function readCookie(request, name) {
+  const header = request.headers.get("cookie") || "";
+  const parts = header.split(";").map(v => v.trim());
+  for (const part of parts) {
+    if (part.startsWith(name + "=")) return decodeURIComponent(part.slice(name.length + 1));
+  }
+  return "";
 }
 
 async function verifySession(cookie) {
@@ -41,8 +49,7 @@ async function verifySession(cookie) {
     const expected = await hmac(payload, secret);
     if (expected !== sig) return null;
 
-    const json = new TextDecoder().decode(b64urlToBytes(payload));
-    return JSON.parse(json);
+    return JSON.parse(b64urlDecode(payload));
   } catch (e) {
     return null;
   }
@@ -55,7 +62,7 @@ async function checkWhopAccess(userId) {
 
     if (!apiKey || !productId || !userId) return false;
 
-    const r = await fetch(
+    const response = await fetch(
       `${API_BASE}/users/${encodeURIComponent(userId)}/access/${encodeURIComponent(productId)}`,
       {
         headers: {
@@ -66,9 +73,9 @@ async function checkWhopAccess(userId) {
       }
     );
 
-    if (!r.ok) return false;
+    if (!response.ok) return false;
 
-    const data = await r.json();
+    const data = await response.json();
     return Boolean(data.has_access) && data.access_level !== "no_access";
   } catch (e) {
     return false;
@@ -81,29 +88,29 @@ export const config = {
 
 export default async function middleware(request) {
   try {
-    const sessionCookie = request.cookies.get("maa_session")?.value;
+    const url = new URL(request.url);
+
+    const sessionCookie = readCookie(request, "maa_session");
     const session = await verifySession(sessionCookie);
 
-    if (!session?.user_id) {
-      return NextResponse.redirect(new URL("/paywall.html", request.url));
+    if (!session || !session.user_id) {
+      return redirectTo(new URL("/paywall.html", url).toString());
     }
 
     const hasAccess = await checkWhopAccess(session.user_id);
 
     if (!hasAccess) {
-      const response = NextResponse.redirect(new URL("/paywall.html?access=expired", request.url));
-      response.cookies.set("maa_session", "", {
-        path: "/",
-        maxAge: 0,
-        httpOnly: true,
-        secure: true,
-        sameSite: "lax",
+      return new Response(null, {
+        status: 302,
+        headers: {
+          Location: new URL("/paywall.html?access=expired", url).toString(),
+          "Set-Cookie": "maa_session=; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=0",
+        },
       });
-      return response;
     }
 
-    return NextResponse.next();
+    return fetch(request);
   } catch (e) {
-    return NextResponse.redirect(new URL("/paywall.html?middleware=error", request.url));
+    return redirectTo(new URL("/paywall.html?middleware=error", request.url).toString());
   }
 }
