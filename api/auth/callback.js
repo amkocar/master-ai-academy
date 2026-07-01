@@ -38,11 +38,12 @@ function clearCookie(name) {
 
 async function exchangeCode({ code, verifier, redirectUri }) {
   const body = {
-    grant_type: "authorization_code",
-    code,
-    redirect_uri: redirectUri,
-    client_id: process.env.WHOP_CLIENT_ID,
-    code_verifier: verifier,
+  grant_type: "authorization_code",
+  code,
+  redirect_uri: redirectUri,
+  client_id: process.env.WHOP_CLIENT_ID,
+  client_secret: process.env.WHOP_CLIENT_SECRET,
+  code_verifier: verifier,
   };
  
 
