@@ -1,25 +1,22 @@
-# v32 Homepage All Buttons to Whop
+# v33 Buttons to Whop Product Page
 
 Upload these files to GitHub root:
 
 - index.html
 - paywall.html
 
-What changed:
+Changed:
 
-- All homepage CTA buttons route to Whop checkout:
-  https://whop.com/checkout/plan_jO0TvvuJFmOlT
+All public CTA buttons now go to the Whop product/sales page instead of direct checkout:
 
-- Direct academy/access/member links were removed from homepage CTAs.
-- Paywall buttons also route to Whop checkout.
-- Academy access should now live only inside Whop member area.
+https://whop.com/ai-king-df57/master-ai-academy/
 
-Whop member area should contain the academy link after payment.
-Public homepage should only sell.
+This is better for trust because customers see the official Whop product page before checkout.
 
-Test after deploy:
+Test:
 
-https://www.learnmasterai.com/?v=32
+https://www.learnmasterai.com/?v=33
 
-Click every main button. It should open:
-https://whop.com/checkout/plan_jO0TvvuJFmOlT
+Every main button should open:
+
+https://whop.com/ai-king-df57/master-ai-academy/
