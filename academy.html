@@ -21,6 +21,36 @@
 .lock-msg{margin-top:8px;color:var(--yellow);font-size:12px}
 
 </style>
+
+<meta name="robots" content="noindex,nofollow,noarchive"/>
+<script>
+(function(){
+  const ACCESS_KEY = "maa_paid_access_v1";
+  const ACCESS_AT_KEY = "maa_access_granted_at";
+  const MAX_AGE_MS = 31 * 24 * 60 * 60 * 1000;
+  const params = new URLSearchParams(window.location.search);
+
+  // Private admin/test unlock link. Do not publish this.
+  const adminPreview = params.get("admin_preview") === "maa_h9O7pNs09Mxe-ERwmDo3hbns99rcGQ53L_QOlwezkz0";
+  if (adminPreview) {
+    localStorage.setItem(ACCESS_KEY, "active");
+    localStorage.setItem(ACCESS_AT_KEY, String(Date.now()));
+    history.replaceState(null, "", location.pathname);
+    return;
+  }
+
+  const hasAccess = localStorage.getItem(ACCESS_KEY) === "active";
+  const grantedAt = Number(localStorage.getItem(ACCESS_AT_KEY) || "0");
+  const notExpired = grantedAt && (Date.now() - grantedAt) < MAX_AGE_MS;
+
+  if (!hasAccess || !notExpired) {
+    localStorage.removeItem(ACCESS_KEY);
+    localStorage.removeItem(ACCESS_AT_KEY);
+    window.location.replace("/paywall.html");
+  }
+})();
+</script>
+
 </head>
 <body>
 <div class="app">
