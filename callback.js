@@ -21,6 +21,7 @@ function sign(payload, secret) {
 function sessionCookie(user, maxAge) {
   const secret = process.env.WHOP_SESSION_SECRET || process.env.WHOP_CLIENT_SECRET;
   if (!secret) throw new Error("Missing WHOP_SESSION_SECRET or WHOP_CLIENT_SECRET");
+
   const payload = b64url(JSON.stringify({
     user_id: user.sub,
     name: user.name || "",
@@ -28,6 +29,7 @@ function sessionCookie(user, maxAge) {
     email: user.email || "",
     iat: Date.now(),
   }));
+
   const sig = sign(payload, secret);
   return `maa_session=${payload}.${sig}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=${maxAge}`;
 }
@@ -37,6 +39,10 @@ function clearCookie(name) {
 }
 
 async function exchangeCode({ code, verifier, redirectUri }) {
+  if (!process.env.WHOP_CLIENT_ID) throw new Error("Missing WHOP_CLIENT_ID");
+
+  // Whop OAuth 2.1 + PKCE token exchange uses client_id + code_verifier.
+  // Do NOT send client_secret to /oauth/token.
   const body = {
     grant_type: "authorization_code",
     code,
@@ -44,7 +50,6 @@ async function exchangeCode({ code, verifier, redirectUri }) {
     client_id: process.env.WHOP_CLIENT_ID,
     code_verifier: verifier,
   };
-  if (process.env.WHOP_CLIENT_SECRET) body.client_secret = process.env.WHOP_CLIENT_SECRET;
 
   const r = await fetch("https://api.whop.com/oauth/token", {
     method: "POST",
@@ -56,6 +61,7 @@ async function exchangeCode({ code, verifier, redirectUri }) {
     const text = await r.text();
     throw new Error(`Token exchange failed ${r.status}: ${text}`);
   }
+
   return r.json();
 }
 
@@ -63,13 +69,19 @@ async function getUserInfo(accessToken) {
   const r = await fetch("https://api.whop.com/oauth/userinfo", {
     headers: { Authorization: `Bearer ${accessToken}` },
   });
-  if (!r.ok) throw new Error(`Userinfo failed: ${r.status}`);
+
+  if (!r.ok) {
+    const text = await r.text();
+    throw new Error(`Userinfo failed ${r.status}: ${text}`);
+  }
+
   return r.json();
 }
 
 async function checkAccess(userId) {
   const apiKey = process.env.WHOP_API_KEY;
   const productId = process.env.WHOP_PRODUCT_ID;
+
   if (!apiKey) throw new Error("Missing WHOP_API_KEY");
   if (!productId) throw new Error("Missing WHOP_PRODUCT_ID");
 
@@ -84,6 +96,7 @@ async function checkAccess(userId) {
     const text = await r.text();
     throw new Error(`Whop access check failed ${r.status}: ${text}`);
   }
+
   return r.json();
 }
 
@@ -91,21 +104,32 @@ module.exports = async (req, res) => {
   try {
     const cookies = parseCookies(req);
     const url = new URL(req.url, `https://${req.headers.host}`);
+
     const code = url.searchParams.get("code");
     const returnedState = url.searchParams.get("state");
     const error = url.searchParams.get("error");
 
     if (error) throw new Error(`Whop OAuth error: ${error}`);
     if (!code || !returnedState) throw new Error("Missing OAuth code/state");
+
     if (!cookies.whop_oauth_state || returnedState !== cookies.whop_oauth_state) {
       throw new Error("Invalid OAuth state");
+    }
+
+    if (!cookies.whop_oauth_verifier) {
+      throw new Error("Missing OAuth verifier cookie");
     }
 
     const host = req.headers["x-forwarded-host"] || req.headers.host;
     const proto = req.headers["x-forwarded-proto"] || "https";
     const redirectUri = process.env.WHOP_REDIRECT_URI || `${proto}://${host}/api/auth/callback`;
 
-    const tokens = await exchangeCode({ code, verifier: cookies.whop_oauth_verifier, redirectUri });
+    const tokens = await exchangeCode({
+      code,
+      verifier: cookies.whop_oauth_verifier,
+      redirectUri,
+    });
+
     const user = await getUserInfo(tokens.access_token);
     const access = await checkAccess(user.sub);
 
@@ -125,6 +149,7 @@ module.exports = async (req, res) => {
       clearCookie("whop_oauth_state"),
       clearCookie("whop_oauth_verifier"),
     ]);
+
     res.writeHead(302, { Location: "/academy.html" });
     res.end();
   } catch (e) {
