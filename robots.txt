@@ -1,4 +1,5 @@
 User-agent: *
+Allow: /
 Disallow: /academy.html
 Disallow: /access.html
 Disallow: /paywall.html
