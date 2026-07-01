@@ -1,13 +1,25 @@
-# v30 Whop PKCE Token Fix
+# v32 Homepage All Buttons to Whop
 
-Replace this file in GitHub:
+Upload these files to GitHub root:
 
-api/auth/callback.js
+- index.html
+- paywall.html
 
-Important:
-If you also have callback.js in the root, replace that too or delete the root copy.
+What changed:
 
-This fix removes client_secret from the Whop OAuth token exchange.
-Then redeploy Vercel and test:
+- All homepage CTA buttons route to Whop checkout:
+  https://whop.com/checkout/plan_jO0TvvuJFmOlT
 
-https://www.learnmasterai.com/api/auth/login
+- Direct academy/access/member links were removed from homepage CTAs.
+- Paywall buttons also route to Whop checkout.
+- Academy access should now live only inside Whop member area.
+
+Whop member area should contain the academy link after payment.
+Public homepage should only sell.
+
+Test after deploy:
+
+https://www.learnmasterai.com/?v=32
+
+Click every main button. It should open:
+https://whop.com/checkout/plan_jO0TvvuJFmOlT
