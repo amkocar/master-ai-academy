@@ -42,8 +42,8 @@ async function exchangeCode({ code, verifier, redirectUri }) {
   code,
   redirect_uri: redirectUri,
   client_id: process.env.WHOP_CLIENT_ID,
-  client_secret: process.env.WHOP_CLIENT_SECRET,
   code_verifier: verifier,
+};
   };
  
 
