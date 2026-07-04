@@ -1,22 +1,23 @@
-# v33 Buttons to Whop Product Page
+# Master AI Academy v35 — Player Polish + Mobile + Continue
 
-Upload these files to GitHub root:
+Upload this file to GitHub root for testing:
 
-- index.html
-- paywall.html
+- member-academy-ai-king-v35.html
 
-Changed:
+Do NOT replace the live Whop Content link yet.
 
-All public CTA buttons now go to the Whop product/sales page instead of direct checkout:
+Test URL after deploy:
 
-https://whop.com/ai-king-df57/master-ai-academy/
+https://www.learnmasterai.com/member-academy-ai-king-v35.html
 
-This is better for trust because customers see the official Whop product page before checkout.
+Changes:
+- v35 topbar
+- Continue button
+- Mobile bottom continue dock
+- Clearer premium styling
+- Progress mini bar based on localStorage
+- No audio paths changed
+- No lesson data changed
 
-Test:
-
-https://www.learnmasterai.com/?v=33
-
-Every main button should open:
-
-https://whop.com/ai-king-df57/master-ai-academy/
+Live link remains:
+https://www.learnmasterai.com/member-academy-ai-king-7xq92.html
